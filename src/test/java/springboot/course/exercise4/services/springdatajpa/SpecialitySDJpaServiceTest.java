@@ -10,16 +10,15 @@ import springboot.course.exercise4.repositories.SpecialtyRepository;
 
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 class SpecialitySDJpaServiceTest {
 
-    @Mock
+    @Mock(lenient = true)
     SpecialtyRepository specialtyRepository;
 
     @InjectMocks
@@ -122,5 +121,69 @@ class SpecialitySDJpaServiceTest {
 
         //THEN
         then(specialtyRepository).should().delete(any(Speciality.class));
+    }
+
+    @Test
+    void deleteThrowException(){
+        doThrow(new RuntimeException("boom")).when(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+        then(specialtyRepository).should().delete(any());
+    }
+
+    @Test
+    void deleteThrowExceptionBDD(){
+        willThrow(new RuntimeException("boom")).given(specialtyRepository).delete(any());
+
+        assertThrows(RuntimeException.class, () -> specialtyRepository.delete(new Speciality()));
+
+        then(specialtyRepository).should().delete(any());
+    }
+
+    @Test
+    void findByIDThrowException(){
+        given(specialtyRepository.findById(2L)).willThrow(new RuntimeException("boom"));
+
+        assertThrows(RuntimeException.class, () -> service.findById(2L));
+
+        then(specialtyRepository).should().findById(2L);
+    }
+
+    @Test
+    void saveLambda(){
+        //GIVEN
+        final String MATCH_ME =  "MATCH_ME";
+        Speciality speciality = new Speciality();
+        speciality.setDescription(MATCH_ME);
+
+        Speciality savedSpeciality = new Speciality();
+        savedSpeciality.setId(2L);
+        // It's necessary to mock in order to make a match
+        given(specialtyRepository.save(argThat(argument -> argument.getDescription().equals(MATCH_ME)))).willReturn(savedSpeciality);
+
+        //WHEN
+        Speciality returnedSpeciality = service.save(speciality);
+
+        //THEN
+        assertThat(returnedSpeciality.getId()).isEqualTo(2L);
+    }
+
+    @Test
+    void saveLambdaNull(){
+        //GIVEN
+        final String MATCH_ME =  "MATCH_ME";
+        Speciality speciality = new Speciality();
+        speciality.setDescription("NOT A MATCH");
+
+        Speciality savedSpeciality = new Speciality();
+        savedSpeciality.setId(2L);
+        // It's necessary to mock in order to make a match
+        given(specialtyRepository.save(argThat(argument -> argument.getDescription().equals(MATCH_ME)))).willReturn(savedSpeciality);
+
+        //WHEN
+        Speciality returnedSpeciality = service.save(speciality);
+
+        //THEN
+        assertNull(returnedSpeciality);
     }
 }
