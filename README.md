@@ -1,6 +1,6 @@
 # Version - Mateo Agudelo García
 
-## Introduction to JUnit 5 with Maven
+## Introduction to JUnit 5 with Mockito
 
 All source code examples in the repository are from [Online Course - Testing Spring Beginner to Guru](https://www.udemy.com/testing-spring-boot-beginner-to-guru/?couponCode=GITHUB_REPO)
 
