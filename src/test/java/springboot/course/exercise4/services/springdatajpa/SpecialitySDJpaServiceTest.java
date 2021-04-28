@@ -27,24 +27,28 @@ class SpecialitySDJpaServiceTest {
 
     @Test
     void deleteByObject(){
-        Speciality speciality = new Speciality();
+        //NO GIVEN
 
+        //WHEN
+        Speciality speciality = new Speciality();
         service.delete(speciality);
 
-        verify(specialtyRepository).delete(any(Speciality.class));
+        //THEN
+        then(specialtyRepository).should().delete(any(Speciality.class));
     }
 
     @Test
     void findById(){
+        //GIVEN
         Speciality speciality = new Speciality();
-        when(specialtyRepository.findById(2L)).thenReturn(Optional.of(speciality));
+        given(specialtyRepository.findById(2L)).willReturn(Optional.of(speciality));
 
+        //WHEN
         Speciality foundSpeciality = service.findById(2L);
 
+        //THEN
         assertNotNull(foundSpeciality);
-
-        verify(specialtyRepository).findById(2L);
-//        verify(specialtyRepository).findById(anyLong());
+        then(specialtyRepository).should().findById(anyLong());
     }
 
     @Test
@@ -64,38 +68,59 @@ class SpecialitySDJpaServiceTest {
 
     @Test
     void deleteById() {
+        //NO GIVEN
+
+        //WHEN
         service.deleteById(12L);
         service.deleteById(12L);
 
-        verify(specialtyRepository,times(2)).deleteById(12L); // Verify is for the Mock Object
+        //THEN
+        then(specialtyRepository).should(times(2)).deleteById(anyLong()); // Verify is for the Mock Object
     }
 
     @Test
     void deleteByIdAtLeastOnce() {
+        //NO GIVEN
+
+        //WHEN
         service.deleteById(12L);
         service.deleteById(12L);
 
-        verify(specialtyRepository,atLeastOnce()).deleteById(12L); // Verify is for the Mock Object
+        //THEN
+        then(specialtyRepository).should(atLeastOnce()).deleteById(12L); // Verify is for the Mock Object
     }
 
     @Test
     void deleteByIdAtMost() {
+        //NO GIVEN
+
+        //WHEN
         service.deleteById(12L);
         service.deleteById(12L);
 
-        verify(specialtyRepository,atMost(5)).deleteById(12L); // Verify is for the Mock Object
+        then(specialtyRepository).should(atMost(5)).deleteById(anyLong()); // Verify is for the Mock Object
     }
 
     @Test
     void deleteByIdNever() {
+        //NO GIVEN
+
+        //WHEN
         service.deleteById(12L);
         service.deleteById(12L);
 
-        verify(specialtyRepository,never()).deleteById(15L); // Verify is for the Mock Object
+        //THEN
+        then(specialtyRepository).should(never()).deleteById(13L); // Verify is for the Mock Object
     }
 
     @Test
     void delete() {
+        //NO GIVEN
+
+        //THEN
         service.delete(new Speciality());
+
+        //THEN
+        then(specialtyRepository).should().delete(any(Speciality.class));
     }
 }

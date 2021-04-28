@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,55 +36,66 @@ class VisitSDJpaServiceTest {
         Visit visit = new Visit(1L);
         Set<Visit> visitSet = new HashSet<>();
         visitSet.add(visit);
+        //GIVEN
+        given(repository.findAll()).willReturn(visitSet);
 
-        when(repository.findAll()).thenReturn(visitSet);
-
+        //WHEN
         Set<Visit> foundVisitSet = service.findAll();
 
+        //THEN
         assertNotNull(foundVisitSet);
-
-        verify(repository).findAll();
-
+        then(repository).should().findAll();
         assertThat(foundVisitSet).hasSize(1);
     }
 
     @Test
     void findById() {
+        //GIVEN
         Visit visit = new Visit();
-        when(repository.findById(anyLong())).thenReturn(Optional.of(visit));
+        given(repository.findById(anyLong())).willReturn(Optional.of(visit));
 
+        //WHEN
         Visit foundVisit = service.findById(35L);
 
+        //THEN
         assertNotNull(foundVisit);
-
-        verify(repository).findById(anyLong());
+        then(repository).should().findById(anyLong());
     }
 
     @Test
     void save() {
+        //GIVEN
         Visit visit = new Visit(12L, LocalDate.now());
-        when(repository.save(any(Visit.class))).thenReturn(visit);
+        given(repository.save(any(Visit.class))).willReturn(visit);
 
+        //WHEN
         Visit foundVisit = service.save(visit);
 
+        //THEN
         assertNotNull(foundVisit);
-
-        verify(repository).save(any(Visit.class));
+        then(repository).should().save(any(Visit.class));
     }
 
     @Test
     void delete() {
-        Visit visit = new Visit(12L);
+        //NO GIVEN
 
+        //WHEN
+        Visit visit = new Visit(12L);
         repository.delete(visit);
 
-        verify(repository).delete(any(Visit.class));
+        //THEN
+        then(repository).should().delete(any(Visit.class));
     }
 
     @Test
     void deleteById() {
+        //NO GIVEN
+
+        //WHEN
         repository.deleteById(13L);
 
-        verify(repository).deleteById(anyLong());
+        //THEN
+        then(repository).should().deleteById(anyLong());
     }
 }
